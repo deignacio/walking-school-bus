@@ -1,5 +1,10 @@
 # walking-school-bus
 
+This is a ReactJS application is meant to simplify the recording, auditing, and potential notification of other families of the progress of a walking school bus.
+
+
+----
+>>>>>>> Initial version that works
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
