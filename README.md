@@ -2,10 +2,19 @@
 
 This is a ReactJS application is meant to simplify the recording, auditing, and potential notification of other families of the progress of a walking school bus.
 
+## Deploying to GitHub Pages
+
+This package has a dependency on `gh-pages` and has a build target that will publish the built application to github pages.
+
+```
+npm run deploy
+```
+
+Easy peasy
 
 ----
->>>>>>> Initial version that works
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+# Templatized information from [Create React App](https://github.com/facebook/create-react-app) below
 
 ## Available Scripts
 
