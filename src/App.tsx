@@ -3,7 +3,7 @@ import './App.css';
 import Utils from './Utils';
 
 import { SchoolModel, RouteModel, StopModel, RunModel } from './Models';
-import { SchoolChooser, RouteChooser } from './Choosers';
+import { SchoolChooser, RouteChooser, LeaderChooser, LeaderChooserMode } from './Choosers';
 import { ArrivedStop, NextStop, PendingStop } from './Stops';
 import SCHOOLS from './Schools';
 
@@ -61,12 +61,21 @@ export default class App extends React.Component<AppProps, AppModel> {
     return (<div className="Run-Route">Route: {this.state.run.route.name}</div>);
   }
 
-  /** Async handler to record that the route has been started by a particular leader */
-  private async onStartRoute(): Promise<any> {
-    const leader: string = prompt('Leader name:') || 'Anonymous leader';
+  /** Async handler to record that a leader has been specified, starting the run if necessary */
+  private async onLeaderChosen(leader: string): Promise<any> {
     this.setState( (state, props) => {
-      state.run.leaders = [{ name: leader }];
-      state.run.start = new Date();
+      state.run.leaders.push({ name: leader });
+      if (!state.run.start) {
+        state.run.start = new Date();
+      }
+      return state;
+    });
+  }
+
+  /** Async handler to remove a leader from the run */
+  private async onLeaderRemoved(leaderIndex: number): Promise<any> {
+    this.setState( (state, props) => {
+      state.run.leaders = state.run.leaders.filter((_, index) => index !== leaderIndex);
       return state;
     });
   }
@@ -76,12 +85,24 @@ export default class App extends React.Component<AppProps, AppModel> {
     if (!this.state.run.school || !this.state.run.route) {
       return '';
     } else if (this.state.run.leaders.length === 0) {
-      return (<button onClick={() => this.onStartRoute()}>Start Route</button>);
+      return (<LeaderChooser mode={LeaderChooserMode.First} callback={(leader:string) => this.onLeaderChosen(leader)}/>);
     }
-    const leaders: Array<any> = this.state.run.leaders.map((leader, i) => (
-      <div className="Run-Leader" key={leader.name + i}>{leader.name}</div>
-    ));
-    return (<div className="Run-Leaders">Leaders: {leaders}</div>);
+    const numLeaders = this.state.run.leaders.length;
+    const leaders: Array<any> = this.state.run.leaders.map((leader, i) => {
+      let removeButton: any = '';
+      if (numLeaders > 1) {
+        const index = i;
+        removeButton = (<span>&nbsp;<button onClick={() => this.onLeaderRemoved(index)}>X</button></span>);
+      }
+      return (<div className="Run-Leader" key={leader.name + i}>
+        {leader.name}
+        {removeButton}
+        </div>);
+    });
+    return (<div className="Run-Leaders">
+      Leaders: {leaders}
+      <LeaderChooser mode={LeaderChooserMode.Add} callback={(leader:string) => this.onLeaderChosen(leader)}/>
+      </div>);
   }
 
   /** Convenience method, renders the start time of the run if it has started */

@@ -1,5 +1,6 @@
 import React from 'react';
 import { SchoolModel, RouteModel } from './Models';
+import Storage from './Storage';
 
 /** The tag properties for the SchoolChooser component */
 interface SchoolChooserProps {
@@ -49,7 +50,57 @@ class RouteChooser extends React.Component<RouteChooserProps> {
   }
 }
 
+/** Is the LeaderChooser component specifying the first leader, or adding one? */
+export enum LeaderChooserMode {
+  First,
+  Add
+}
+
+/** The tag properties for the LeaderChooser component */
+interface LeaderChooserProps {
+  /** The mode of the chooser, toggling the messages */
+  mode: LeaderChooserMode
+
+  /** Callback invoked when a leader is chosen */
+  callback: (leader: string) => Promise<any>
+}
+
+/** React component to allow a user to specify the leader name */
+class LeaderChooser extends React.Component<LeaderChooserProps> {
+  static LEADER_STORAGE_KEY: string = 'leader';
+
+  private getCachedLeaderName(): string | null {
+    return Storage.get(LeaderChooser.LEADER_STORAGE_KEY);
+  }
+
+  private cacheLeaderName(leader: string): void {
+    Storage.put(LeaderChooser.LEADER_STORAGE_KEY, leader);
+  }
+
+  private async onButtonPress() {
+    const cached = this.getCachedLeaderName() || 'Anonymous';
+    let message: string = 'Who is leading the route?';
+    if (this.props.mode === LeaderChooserMode.Add) {
+      message = 'Who is joining as a leader?';
+    }
+    const leader = prompt(message, cached) || 'Anonymous';
+    if (leader !== 'Anonymous') {
+      this.cacheLeaderName(leader);
+    }
+    this.props.callback(leader);
+  }
+
+  render() {
+    let message: string = 'Start Route';
+    if (this.props.mode === LeaderChooserMode.Add) {
+      message = 'Add Leader';
+    }
+    return (<button onClick={() => this.onButtonPress()}>{message}</button>);
+  }
+}
+
 export {
   SchoolChooser,
   RouteChooser,
+  LeaderChooser,
 }
