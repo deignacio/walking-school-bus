@@ -168,6 +168,29 @@ export default class App extends React.Component<AppProps, AppModel> {
     return (<div className="Run-End">End: {this.state.run.end.toISOString()}</div>);
   }
 
+  /** Triggers a file download of the current run's data */
+  private async onDownloadPressed(): Promise<any> {
+    const options: BlobPropertyBag = { type: 'application/json' };
+    const blob: Blob = new Blob([JSON.stringify(this.state.run)], options);
+    const element = document.createElement('a');
+    element.setAttribute('href', window.URL.createObjectURL(blob));
+    const filename = this.state.run.school?.name + '-' + this.state.run.route?.name + '-' + this.state.run.start?.toISOString + '.json';
+    element.setAttribute('download', filename);
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  }
+
+  /** Convenience method, renders a download button if the run is done */
+  private get download(): any {
+    if (!this.state.run.end) {
+      return '';
+    }
+
+    return (<button onClick={() => this.onDownloadPressed()}>Download Data</button>)
+  }
+
   render() {
     return (
       <div className="App">
@@ -181,6 +204,7 @@ export default class App extends React.Component<AppProps, AppModel> {
           {this.start}
           {this.stops}
           {this.end}
+          {this.download}
         </div>
       </div>
     );
