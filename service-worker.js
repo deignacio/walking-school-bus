@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/walking-school-bus/precache-manifest.96c96bd27fcdc6ee74029de362414529.js"
+  "/walking-school-bus/precache-manifest.3d888a7971cd2189bb3a360cb886b2bd.js"
 );
 
 self.addEventListener('message', (event) => {
