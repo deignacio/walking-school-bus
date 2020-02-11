@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import Utils from './Utils';
+import { DateUtils, LocationUtils } from './Utils';
 
 import { SchoolModel, RouteModel, StopModel, RunModel } from './Models';
 import { SchoolChooser, RouteChooser, LeaderChooser, LeaderChooserMode } from './Choosers';
@@ -116,11 +116,13 @@ export default class App extends React.Component<AppProps, AppModel> {
 
   /** Async handler, records an arrival at a stop in the run model */
   private async onArrival(stop: StopModel): Promise<any> {
+    const here = await LocationUtils.getCurrentPosition();
     this.setState( (state, props) => {
-      const now = Utils.now();
+      const now = DateUtils.now();
       state.run.arrivals.push({
         stop: stop,
         timestamp: now,
+        position: here,
       });
       if (state.run.route && state.run.arrivals.length === state.run.route.stops.length) {
         state.run.end = now;
@@ -139,20 +141,20 @@ export default class App extends React.Component<AppProps, AppModel> {
     let i = 0;
     for (; i < this.state.run.arrivals.length; i++) {
       const arrival = this.state.run.arrivals[i];
-      elements.push((<ArrivedStop arrival={arrival} />));
+      elements.push((<ArrivedStop arrival={arrival} key={i + ''}/>));
     }
 
     // Render the next stop along the route
     const nextStop = this.state.run.route.stops[i];
     if (nextStop) {
-      elements.push((<NextStop stop={nextStop} onArrival={(stop: StopModel) => this.onArrival(stop)} />));
+      elements.push((<NextStop stop={nextStop} onArrival={(stop: StopModel) => this.onArrival(stop)} key={i + ''}/>));
       i++;
     }
 
     // Render any pending steps remaining in the route
     while (i < this.state.run.route.stops.length) {
       const stop = this.state.run.route.stops[i];
-      elements.push((<PendingStop stop={stop} />));
+      elements.push((<PendingStop stop={stop} key={i + ''}/>));
       i++;
     }
     return elements;

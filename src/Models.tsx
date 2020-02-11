@@ -55,5 +55,8 @@ export interface StopArrivalModel {
   stop: StopModel
 
   /** When the bus arrived at the stop */
-  timestamp: Date
+  timestamp: Date,
+
+  /** The position recorded for the arrival */
+  position: Position
 }

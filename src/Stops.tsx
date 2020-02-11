@@ -20,6 +20,7 @@ class ArrivedStop extends React.Component<ArrivedStopParams> {
         <div className="ArrivedStop-Header">Arrived at Stop</div>
         <div className="ArrivedStop-Name">{this.props.arrival.stop.name}</div>
         <div className="ArrivedStop-Timestamp">{this.props.arrival.timestamp.toISOString()}</div>
+        <div className="ArrivedStop-Position">Lat: {this.props.arrival.position.coords.latitude}, Lon: {this.props.arrival.position.coords.longitude}, Alt: {this.props.arrival.position.coords.altitude}</div>
       </div>);
   }
 }
